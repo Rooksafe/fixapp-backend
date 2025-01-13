@@ -19,8 +19,8 @@ python manage.py migrate
 python manage.py runserver
 # Create superuser
 python manage.py createsuperuser
-angeliks
-angeliks@gmail.com
+admin
+admin@gmail.com
 1234
 
 
