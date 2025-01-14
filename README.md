@@ -23,4 +23,11 @@ admin
 admin@gmail.com
 1234
 
+#To install dlib i have to install 1. On Windows
+Download and install CMake from the official website: https://cmake.org/download/.
+During installation, make sure to select the option to Add CMake to PATH for all users.
+2. Install Visual Studio Build Tools (Windows Only)
+For Windows, dlib also requires a C++ compiler. You can install the Visual Studio Build Tools:
 
+Download the build tools from Visual Studio Build Tools.
+During installation, select the C++ build tools workload.
