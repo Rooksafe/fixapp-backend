@@ -72,3 +72,4 @@ db.sqlite3
 
 # Ignorar carpetas de migraciones
 **/migrations/
+migrations
