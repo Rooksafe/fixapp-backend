@@ -1,5 +1,42 @@
 from django.db import models
 from users.models import Client, Professional
+from users.models import Professional, User
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    professional = models.ForeignKey(Professional, on_delete=models.CASCADE, related_name='bookings')
+    service = models.CharField(max_length=255)
+    date = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        overlapping_bookings = Booking.objects.filter(
+            professional=self.professional,
+            date=self.date,
+            status__in=['pending', 'confirmed']
+        ).exclude(pk=self.pk)
+
+        if overlapping_bookings.exists():
+            raise ValidationError('El profesional ya tiene una reserva para este horario.')
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Booking by {self.user.username} with {self.professional.user.username} on {self.date}"
+
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)

@@ -1,5 +1,18 @@
 from rest_framework import serializers
-from .models import User, Category, Professional, Client, Job, Application
+from .models import User, Category, Professional, Client, Job, Apply, Booking
+from django.utils.timezone import now
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'
+        read_only_fields = ['created_at']
+
+    def validate(self, data):
+        if self.instance and self.instance.status in ['confirmed', 'rejected', 'cancelled']:
+            raise serializers.ValidationError("No se puede modificar una reserva ya confirmada, rechazada o cancelada.")
+        return data
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,10 +45,10 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ['id', 'client', 'title', 'description', 'created_at', 'is_open']
 
-class ApplicationSerializer(serializers.ModelSerializer):
+class ApplySerializer(serializers.ModelSerializer):
     job = JobSerializer()
     professional = ProfessionalSerializer()
 
     class Meta:
-        model = Application
+        model = Apply
         fields = ['id', 'job', 'professional', 'message', 'created_at']
